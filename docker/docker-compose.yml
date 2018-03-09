@@ -9,6 +9,7 @@ services:
     working_dir: /var/www
     volumes:
       - ../:/var/www
+      - ./ssl:/etc/nginx/ssl
 
   # The Web Server
   web:
@@ -20,6 +21,7 @@ services:
       - app
     ports:
       - 8080:80
+      - 8443:443
 
 volumes:
   dbdata:

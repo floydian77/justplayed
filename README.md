@@ -24,6 +24,9 @@ Start services.
 
 ```sh
 $ docker-compose up -d
+$ docker-compose exec app bash
+$ cd docker
+$ ./build-ssl-cert.sh
 ```
 
 Laravel.
@@ -32,4 +35,10 @@ Laravel.
 $ docker-compose exec app bash
 $ cp .env.example .env
 $ php artisan key:generate
+```
+
+Rebuild
+
+```sh
+$ docker-compose up -d --build
 ```
