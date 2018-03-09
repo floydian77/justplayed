@@ -11,6 +11,8 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Route::group([], function() {
+    Route::get('/', 'CollectionController@index');
+    Route::resource('collection', 'CollectionController')->only(['index', 'show']);
+    Route::resource('settings', 'SettingsController')->only(['index']);
 });
