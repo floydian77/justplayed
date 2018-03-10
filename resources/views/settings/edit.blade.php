@@ -10,24 +10,26 @@
             </div>
         @endif
 
-        <h2>Discogs</h2>
-
-        Get a personal access token at <a href="https://www.discogs.com/settings/developers" target="_blank">Discogs >>
-            Settings >> Developers</a>
-
         <form action="{{route('settings.update')}}" method="post">
             @method('put')
             @csrf
 
-            <div class="form-group">
-                <input name="discogs_user" placeholder="Discogs username" value="{{$settings->get('discogs_user')}}"
-                       class="form-control" required>
-            </div>
+            <h2>Discogs</h2>
 
-            <div class="form-group">
-                <input name="discogs_token" placeholder="Personal access token"
-                       value="{{$settings->get('discogs_token')}}" class="form-control" required>
-            </div>
+            Get a personal access token at <a href="https://www.discogs.com/settings/developers" target="_blank">Discogs
+                >>
+                Settings >> Developers</a>
+
+            @foreach($keys as $key => $placeholder)
+                @unless(strpos($key, 'discogs'))
+                    @continue
+                @endunless
+
+                <div class="form-group">
+                    <input name="{{$key}}" placeholder="{{$placeholder}}" value="{{$settings->get($key)}}"
+                           class="form-control" required>
+                </div>
+            @endforeach
 
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-lg btn-primary">

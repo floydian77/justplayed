@@ -15,9 +15,13 @@ class SettingsController extends Controller
      */
     public function edit()
     {
-        $settings = collect(Redis::hgetall($this->hashName()));
+        $settings = collect();
+        foreach ($this->keys() as $key => $value) {
+            $settings = $settings->merge($this->get($key));
+        }
 
         return view('settings.edit')
+            ->with('keys', $this->keys())
             ->with('settings', $settings);
     }
 
@@ -29,8 +33,9 @@ class SettingsController extends Controller
      */
     public function update(Request $request)
     {
-        Redis::hset($this->hashName(), 'discogs_user', $request->get('discogs_user'));
-        Redis::hset($this->hashName(), 'discogs_token', $request->get('discogs_token'));
+        foreach (array_keys($this->keys()) as $key) {
+            $this->set($key, $request->get($key));
+        }
 
         return redirect()
             ->route('settings.edit')
@@ -38,10 +43,43 @@ class SettingsController extends Controller
     }
 
     /**
-     * @return string
+     * Generate keys foreach setting.
+     *
+     * @return array
      */
-    private function hashName()
+    private function keys()
     {
-        return sprintf("settings:user:%d", Auth::id());
+        $id = Auth::id();
+
+        return [
+            "settings:user:$id:discogs:username" => 'Discogs username',
+            "settings:user:$id:discogs:token" => 'Personal access token'
+        ];
+    }
+
+
+    /**
+     * Get decrypted $value of $key.
+     *
+     * @param $key
+     * @return array
+     */
+    private function get($key)
+    {
+        $value = decrypt(Redis::get($key));
+        return [$key => $value];
+    }
+
+    /**
+     * Encrypt $value and set.
+     *
+     * @param $key
+     * @param $value
+     * @return mixed
+     */
+    private function set($key, $value)
+    {
+        $value = encrypt($value);
+        return Redis::set($key, $value);
     }
 }
