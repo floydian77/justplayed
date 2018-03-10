@@ -19,6 +19,11 @@ Route::group(['namespace' => 'Auth'], function () {
 
 Route::group(['middleware' => ['auth']], function () {
     Route::get('/', 'CollectionController@index');
+
+    Route::group(['prefix' => 'collection'], function () {
+        Route::get('sync', 'CollectionController@showSyncForm')->name('collection.syncForm');
+        Route::put('sync', 'CollectionController@sync')->name('collection.sync');
+    });
     Route::resource('collection', 'CollectionController')->only(['index', 'show']);
 
     Route::get('settings', 'SettingsController@edit')->name('settings.edit');

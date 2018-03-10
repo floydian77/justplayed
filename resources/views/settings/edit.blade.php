@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('navbar_primary_title', 'Settings')
+
 @section('content')
     <div>
         <h1>Settings</h1>
