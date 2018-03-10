@@ -11,7 +11,13 @@
 |
 */
 
-Route::group([], function() {
+Route::group(['namespace' => 'Auth'], function () {
+    Route::get('login', 'LoginController@login')->name('login');
+    Route::post('authenticate', 'LoginController@authenticate')->name('authenticate');
+    Route::post('logout', 'LoginController@logout')->name('logout');
+});
+
+Route::group(['middleware' => ['auth']], function () {
     Route::get('/', 'CollectionController@index');
     Route::resource('collection', 'CollectionController')->only(['index', 'show']);
     Route::resource('settings', 'SettingsController')->only(['index']);
