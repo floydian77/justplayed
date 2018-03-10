@@ -20,37 +20,45 @@
 
 <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
     <a class="navbar-brand" href="{{url('/')}}">{{config('app.name')}}</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarsExampleDefault">
-        <ul class="navbar-nav mr-auto">
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="{{url('/')}}" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    @switch(Route::getCurrentRoute()->uri)
-                        @case('collection')
+    @if(Auth::user())
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault"
+                aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="{{url('/')}}" id="dropdown01" data-toggle="dropdown"
+                       aria-haspopup="true" aria-expanded="false">
+                        @switch(Route::getCurrentRoute()->uri)
+                            @case('collection')
                             Collection
                             @break
 
-                        @case('settings')
+                            @case('settings')
                             Settings
                             @break
 
-                        @default
+                            @default
                             Home
-                    @endswitch
-                </a>
-                <div class="dropdown-menu" aria-labelledby="dropdown01">
-                    <a class="dropdown-item" href="{{route('collection.index')}}">Collection</a>
-                    <a class="dropdown-item" href="{{route('settings.index')}}">Settings</a>
-                </div>
-            </li>
-        </ul>
-        <form class="form-inline my-2 my-lg-0">
-            <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
-            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-        </form>
-    </div>
+                        @endswitch
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="dropdown01">
+                        <a class="dropdown-item" href="{{route('collection.index')}}">Collection</a>
+                        <a class="dropdown-item" href="{{route('settings.index')}}">Settings</a>
+                        <a id="logout-link" class="dropdown-item" href="{{route('logout')}}">Logout</a>
+                    </div>
+                    <form id="logout-form" action="{{route('logout')}}" method="post">
+                        @csrf
+                    </form>
+                </li>
+            </ul>
+            <form class="form-inline my-2 my-lg-0">
+                <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+            </form>
+        </div>
+    @endif
 </nav>
 
 <main role="main" class="container">
@@ -61,5 +69,11 @@
 ================================================== -->
 <!-- Placed at the end of the document so the pages load faster -->
 <script src="{{asset('js/app.js')}}"></script>
+<script>
+    $('#logout-link').on("click", function (event) {
+        event.preventDefault();
+        $('#logout-form').submit();
+    })
+</script>
 </body>
 </html>
