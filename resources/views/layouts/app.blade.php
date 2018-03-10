@@ -45,7 +45,7 @@
                     </a>
                     <div class="dropdown-menu" aria-labelledby="dropdown01">
                         <a class="dropdown-item" href="{{route('collection.index')}}">Collection</a>
-                        <a class="dropdown-item" href="{{route('settings.index')}}">Settings</a>
+                        <a class="dropdown-item" href="{{route('settings.edit')}}">Settings</a>
                         <a id="logout-link" class="dropdown-item" href="{{route('logout')}}">Logout</a>
                     </div>
                     <form id="logout-form" action="{{route('logout')}}" method="post">

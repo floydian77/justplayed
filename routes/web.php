@@ -20,5 +20,7 @@ Route::group(['namespace' => 'Auth'], function () {
 Route::group(['middleware' => ['auth']], function () {
     Route::get('/', 'CollectionController@index');
     Route::resource('collection', 'CollectionController')->only(['index', 'show']);
-    Route::resource('settings', 'SettingsController')->only(['index']);
+
+    Route::get('settings', 'SettingsController@edit')->name('settings.edit');
+    Route::put('settings', 'SettingsController@update')->name('settings.update');
 });
