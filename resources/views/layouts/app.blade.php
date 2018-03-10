@@ -34,5 +34,7 @@
         $('#logout-form').submit();
     })
 </script>
+@section('scripts')
+@show
 </body>
 </html>

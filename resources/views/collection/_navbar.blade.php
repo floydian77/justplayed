@@ -4,7 +4,7 @@
         {{$title}}
     </a>
     <div class="dropdown-menu" aria-labelledby="dropdown_secondary">
-        <a class="dropdown-item" href="{{route('collection.index')}}">Collection</a>
+        <a class="dropdown-item" href="{{route('collection.index')}}">Index</a>
         <a class="dropdown-item" href="{{route('collection.syncForm')}}">Synchronize</a>
     </div>
 </li>

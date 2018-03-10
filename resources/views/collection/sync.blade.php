@@ -9,5 +9,30 @@
 @section('content')
     <div>
         <h1>Synchronize</h1>
+
+        <div>
+            Synchronize collection, click only once, be patient.
+        </div>
+
+        <div>
+
+            <a id="sync-link" href="{{route('collection.sync')}}" class="btn btn-lg btn-warning">
+                Synchronize collection
+            </a>
+            <form id="sync-form" action="{{route('collection.sync')}}" method="post">
+                @method('put')
+                @csrf
+            </form>
+        </div>
     </div>
+@stop
+
+@section('scripts')
+    <script>
+        $('#sync-link').on("click", function (event) {
+            event.preventDefault();
+
+            $('#sync-form').submit();
+        })
+    </script>
 @stop
