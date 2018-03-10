@@ -69,7 +69,7 @@
 ================================================== -->
 <!-- Placed at the end of the document so the pages load faster -->
 <script src="{{asset('js/app.js')}}"></script>
-<script type="application/javascript">
+<script>
     $('#logout-link').on("click", function (event) {
         event.preventDefault();
         $('#logout-form').submit();

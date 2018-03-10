@@ -1,11 +1,17 @@
 @extends('layouts.app')
 
 @section('content')
+    @if(session('error'))
+        <div class="alert alert-warning">
+            {{session('error')}}
+        </div>
+    @endif
+
     <form action="{{route('authenticate')}}" method="post">
         @csrf
 
         <div class="form-group">
-            <input name="email" type="email" class="form-control" placeholder="email" required>
+            <input name="email" type="email" class="form-control" placeholder="email" value="{{old('email')}}" required>
         </div>
 
         <div class="form-group">

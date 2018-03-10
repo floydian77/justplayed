@@ -56,20 +56,14 @@ class LoginController extends Controller
         $email = $request->get('email');
         $password = $request->get('password');
 
-        if (Auth::attempt(['email' => $email, 'password' => $password])) {
+        if (Auth::attempt(['email' => $email, 'password' => $password], true)) {
             // Authentication passed...
-            return redirect()->intended('dashboard');
+            return redirect()->intended('/');
         }
 
-//        if (Auth::attempt([
-//            'email' => $request->get('email'),
-//            'password' => $request->get('password')],
-//            true)) {
-//            return redirect()
-//                ->intended('/');
-//        }
         return redirect()
             ->back()
+            ->withInput($request->all(['email']))
             ->with('error', 'Wrong credentials.');
     }
 
