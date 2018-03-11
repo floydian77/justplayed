@@ -34,7 +34,6 @@ class CollectionController extends Controller
         $collection = collect();
         foreach ($_collection as $release) {
             $release = json_decode($release);
-            $release->_artist = $this->mergeArtists($release->basic_information->artists);
             $collection->put($release->id, $release);
         }
 
@@ -63,11 +62,21 @@ class CollectionController extends Controller
         //
     }
 
+    /**
+     * Show form to synchronize collection with discogs.
+     *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function showSyncForm()
     {
         return view('collection.sync');
     }
 
+    /**
+     * Synchronize collection.
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function sync()
     {
         $username = SettingsHelper::get(
@@ -106,6 +115,17 @@ class CollectionController extends Controller
         return implode(', ', $_artists);
     }
 
+    /**
+     * Synchronize collection from Discogs and store in Redis.
+     * Response is paginated, when there are more pages it calls it self.
+     * Response time could be slow with larger collections, maybe to large.
+     *
+     * @todo Response time could be to long, nginx could throw an 504 Gateway Time-out error.
+     *
+     * @param $username
+     * @param int $page
+     * @return mixed
+     */
     private function syncCollection($username, $page = 1)
     {
         $id = Auth::id();
@@ -115,7 +135,7 @@ class CollectionController extends Controller
             Redis::del($hash);
         }
 
-        $response = $this->discogsClient()
+        $response = $this->discogsService()
             ->getCollectionItemsByFolder([
                 'username' => $username,
                 'folder_id' => 0,
@@ -124,9 +144,12 @@ class CollectionController extends Controller
             ]);
 
         foreach ($response['releases'] as $release) {
+            $release = json_decode(json_encode($release));
+            $release->_artist = $this->mergeArtists($release->basic_information->artists);
+
             $json = json_encode($release);
-            $json->_artist = $this->mergeArtists($json->basic_information->artists);
-            Redis::hset($hash, $release['instance_id'], $json);
+
+            Redis::hset($hash, $release->instance_id, $json);
         }
 
         $pages = $response['pagination']['pages'];
@@ -137,9 +160,15 @@ class CollectionController extends Controller
         return $response;
     }
 
+    /**
+     * Get all folders and store them.
+     *
+     * @param $username
+     * @return mixed
+     */
     private function syncFolders($username)
     {
-        $response = $this->discogsClient()
+        $response = $this->discogsService()
             ->getCollectionFolders([
                 'username' => $username
             ]);
@@ -156,7 +185,12 @@ class CollectionController extends Controller
         return $response;
     }
 
-    private function discogsClient()
+    /**
+     * Initialize Discogs service.
+     *
+     * @return \GuzzleHttp\Command\Guzzle\GuzzleClient
+     */
+    private function discogsService()
     {
         $token = SettingsHelper::get(
             sprintf(
