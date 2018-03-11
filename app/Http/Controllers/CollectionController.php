@@ -20,8 +20,8 @@ class CollectionController extends Controller
         $id = Auth::id();
 
         // Get folders and put decoded json in a collection.
-        $folder_hash = "user:$id:discogs:folders:";
-        $_folders = Redis::hgetall($folder_hash);
+        $folderHashName = "user:$id:discogs:folders:";
+        $_folders = Redis::hgetall($folderHashName);
         $folders = collect();
         foreach ($_folders as $folder) {
             $folder = json_decode($folder);
@@ -29,20 +29,21 @@ class CollectionController extends Controller
         }
 
         // Get collection and put decoded json in a collection.
-        $collection_hash = "user:$id:discogs:collection";
-        $_collection = Redis::hgetall($collection_hash);
+        $collectionHashName = "user:$id:discogs:collection";
+        $_collection = Redis::hgetall($collectionHashName);
         $collection = collect();
-        foreach ($_collection as $item) {
-            $item = json_decode($item);
-            $collection->put($item->id, $item);
+        foreach ($_collection as $release) {
+            $release = json_decode($release);
+            $release->_artist = $this->mergeArtists($release->basic_information->artists);
+            $collection->put($release->id, $release);
         }
 
         // Sort on artist, year.
         $collection = $collection->sort(function ($a, $b) {
-            if ($a->basic_information->artists[0]->name === $b->basic_information->artists[0]->name) {
+            if ($a->_artist === $b->_artist) {
                 return $a->basic_information->year > $b->basic_information->year;
             }
-            return $a->basic_information->artists[0]->name > $b->basic_information->artists[0]->name;
+            return $a->_artist > $b->_artist;
         });
 
         // Return view.
@@ -84,6 +85,27 @@ class CollectionController extends Controller
             ->with('status', 'Synchronized collection');
     }
 
+    /**
+     * Merge all artists from a release into one string and clean up name,
+     * eg 'Epica (2)' => 'Epica'
+     *
+     * @param $artists
+     * @return string
+     */
+    private function mergeArtists($artists)
+    {
+        $_artists = array();
+        foreach ($artists as $artist) {
+            $name = $artist->name;
+            if (strrpos($name, ' (')) {
+                $name = trim(substr($name, 0, strrpos($name, ' (')));
+            }
+            array_push($_artists, $name);
+        }
+
+        return implode(', ', $_artists);
+    }
+
     private function syncCollection($username, $page = 1)
     {
         $id = Auth::id();
@@ -101,9 +123,10 @@ class CollectionController extends Controller
                 'page' => $page
             ]);
 
-        foreach ($response['releases'] as $item) {
-            $json = json_encode($item);
-            Redis::hset($hash, $item['instance_id'], $json);
+        foreach ($response['releases'] as $release) {
+            $json = json_encode($release);
+            $json->_artist = $this->mergeArtists($json->basic_information->artists);
+            Redis::hset($hash, $release['instance_id'], $json);
         }
 
         $pages = $response['pagination']['pages'];

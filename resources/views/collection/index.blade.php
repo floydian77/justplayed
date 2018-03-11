@@ -23,12 +23,12 @@
                 </tr>
                 </thead>
                 <tbody>
-                @foreach($collection as $item)
+                @foreach($collection as $release)
                     <tr>
-                        <td>{{$item->basic_information->artists[0]->name}}</td>
-                        <td>{{$item->basic_information->title}}</td>
-                        <td>{{$item->basic_information->year}}</td>
-                        <td>{{$folders[$item->folder_id]->name}}</td>
+                        <td>{{$release->_artist}}</td>
+                        <td>{{$release->basic_information->title}}</td>
+                        <td>{{$release->basic_information->year}}</td>
+                        <td>{{$folders[$release->folder_id]->name}}</td>
                     </tr>
                 @endforeach
                 </tbody>
