@@ -13,6 +13,8 @@
         </a>
     </h1>
 
+    @include('partials._status');
+
     <h2>Details</h2>
 
     <div class="table-responsive">

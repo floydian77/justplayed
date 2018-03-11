@@ -16,10 +16,10 @@
 
         <div>
 
-            <a id="sync-link" href="{{route('collection.sync')}}" class="btn btn-lg btn-warning">
+            <a id="sync-link" href="{{route('sync.sync')}}" class="btn btn-lg btn-warning">
                 Synchronize collection
             </a>
-            <form id="sync-form" action="{{route('collection.sync')}}" method="post">
+            <form id="sync-form" action="{{route('sync.sync')}}" method="post">
                 @method('put')
                 @csrf
             </form>

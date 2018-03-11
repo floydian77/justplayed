@@ -5,6 +5,6 @@
     </a>
     <div class="dropdown-menu" aria-labelledby="dropdown_secondary">
         <a class="dropdown-item" href="{{route('collection.index')}}">Index</a>
-        <a class="dropdown-item" href="{{route('collection.syncForm')}}">Synchronize</a>
+        <a class="dropdown-item" href="{{route('sync.index')}}">Synchronize</a>
     </div>
 </li>

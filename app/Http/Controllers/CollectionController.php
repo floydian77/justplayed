@@ -2,9 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Helpers\SettingsHelper;
-use Discogs\ClientFactory;
-use Discogs\Subscriber\ThrottleSubscriber;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redis;
 
@@ -17,16 +14,42 @@ class CollectionController extends Controller
      */
     public function index()
     {
-        $id = Auth::id();
+        $folders = $this->getFolders();
+        $collection = $this->getCollection();
 
-        // Get folders and put decoded json in a collection.
-        $folderHashName = "user:$id:discogs:folders:";
-        $_folders = Redis::hgetall($folderHashName);
-        $folders = collect();
-        foreach ($_folders as $folder) {
-            $folder = json_decode($folder);
-            $folders->put($folder->id, $folder);
+        // Return view.
+        return view('collection.index')
+            ->with('folders', $folders)
+            ->with('collection', $collection);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+        $release = $this->getRelease($id);
+
+        if (empty($release)) {
+            return redirect()
+                ->route('sync.fetch-release', $id);
         }
+
+        return view('collection.show')
+            ->with('release', $release);
+    }
+
+    /**
+     * Get collection from redis and sort it.
+     *
+     * @return \Illuminate\Support\Collection|static
+     */
+    private function getCollection()
+    {
+        $id = Auth::id();
 
         // Get collection and put decoded json in a collection.
         $collectionHashName = "user:$id:discogs:collection";
@@ -45,80 +68,28 @@ class CollectionController extends Controller
             return $a->_artist > $b->_artist;
         });
 
-        // Return view.
-        return view('collection.index')
-            ->with('folders', $folders)
-            ->with('collection', $collection);
+        return $collection;
     }
 
     /**
-     * Display the specified resource.
+     * Get folders from redis and sort it.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Support\Collection
      */
-    public function show($id)
+    private function getFolders()
     {
-        $release = $this->getRelease($id);
+        $id = Auth::id();
 
-        return view('collection.show')
-            ->with('release', $release);
-    }
+        // Get folders and put decoded json in a collection.
+        $folderHashName = "user:$id:discogs:folders:";
+        $_folders = Redis::hgetall($folderHashName);
+        $folders = collect();
+        foreach ($_folders as $folder) {
+            $folder = json_decode($folder);
+            $folders->put($folder->id, $folder);
+        }
 
-    /**
-     * Show form to synchronize collection with discogs.
-     *
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
-     */
-    public function showSyncForm()
-    {
-        return view('collection.sync');
-    }
-
-    /**
-     * Synchronize collection.
-     *
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function sync()
-    {
-        $username = SettingsHelper::get(
-            sprintf(
-                'settings:user:%d:discogs:username',
-                Auth::id()
-            )
-        );
-
-        $this->syncFolders($username);
-        $this->syncCollection($username);
-
-        return redirect()
-            ->route('collection.index')
-            ->with('status', 'Synchronized collection');
-    }
-
-    /**
-     * Fetch release from Discogs and store in redis.
-     *
-     * @param $id
-     * @return mixed
-     */
-    private function fetchRelease($id)
-    {
-        // Fetch release from discogs
-        $response = $this->discogsService()
-            ->getRelease([
-                'id' => $id
-            ]);
-
-        $release = json_encode($response);
-        $key = sprintf(
-            "release:%d",
-            $response['id']
-        );
-
-        Redis::set($key, $release);
-        return json_decode($release);
+        return $folders;
     }
 
     /**
@@ -135,131 +106,6 @@ class CollectionController extends Controller
         );
         $release = json_decode(Redis::get($key));
 
-        if (empty($release)) {
-            return $this->fetchRelease($id);
-        }
-
         return $release;
-
-    }
-
-    /**
-     * Merge all artists from a release into one string and clean up name,
-     * eg 'Epica (2)' => 'Epica'
-     *
-     * @param $artists
-     * @return string
-     */
-    private function mergeArtists($artists)
-    {
-        $_artists = array();
-        foreach ($artists as $artist) {
-            $name = $artist->name;
-            if (strrpos($name, ' (')) {
-                $name = trim(substr($name, 0, strrpos($name, ' (')));
-            }
-            array_push($_artists, $name);
-        }
-
-        return implode(', ', $_artists);
-    }
-
-    /**
-     * Synchronize collection from Discogs and store in Redis.
-     * Response is paginated, when there are more pages it calls it self.
-     * Response time could be slow with larger collections, maybe to large.
-     *
-     * @todo Response time could be to long, nginx could throw an 504 Gateway Time-out error.
-     *
-     * @param $username
-     * @param int $page
-     * @return mixed
-     */
-    private function syncCollection($username, $page = 1)
-    {
-        $id = Auth::id();
-        $hash = "user:$id:discogs:collection";
-
-        if ($page == 1) {
-            Redis::del($hash);
-        }
-
-        $response = $this->discogsService()
-            ->getCollectionItemsByFolder([
-                'username' => $username,
-                'folder_id' => 0,
-                'per_page' => 100,
-                'page' => $page
-            ]);
-
-        foreach ($response['releases'] as $release) {
-            $release = json_decode(json_encode($release));
-            $release->_artist = $this->mergeArtists($release->basic_information->artists);
-
-            $json = json_encode($release);
-
-            Redis::hset($hash, $release->instance_id, $json);
-        }
-
-        $pages = $response['pagination']['pages'];
-        if ($page < $pages) {
-            return $this->syncCollection($username, $page + 1);
-        }
-
-        return $response;
-    }
-
-    /**
-     * Get all folders and store them.
-     *
-     * @param $username
-     * @return mixed
-     */
-    private function syncFolders($username)
-    {
-        $response = $this->discogsService()
-            ->getCollectionFolders([
-                'username' => $username
-            ]);
-
-        $id = Auth::id();
-        $hash = "user:$id:discogs:folders:";
-
-        Redis::del($hash);
-        foreach ($response['folders'] as $folder) {
-            $json = json_encode($folder);
-            Redis::hset($hash, $folder['id'], $json);
-        }
-
-        return $response;
-    }
-
-    /**
-     * Initialize Discogs service.
-     *
-     * @return \GuzzleHttp\Command\Guzzle\GuzzleClient
-     */
-    private function discogsService()
-    {
-        $token = SettingsHelper::get(
-            sprintf(
-                'settings:user:%d:discogs:token',
-                Auth::id()
-            )
-        );
-
-        $client = ClientFactory::factory([
-            'defaults' => [
-                'headers' => [
-                    'User-Agent' => 'justplayed/0.0 +https://github.com/floydian77/justplayed'
-                ],
-                'query' => [
-                    'token' => $token
-                ]
-            ]
-        ]);
-        $client->getHttpClient()->getEmitter()->attach(new ThrottleSubscriber());
-
-        return $client;
     }
 }
