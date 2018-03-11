@@ -19,24 +19,33 @@ class CollectionController extends Controller
     {
         $id = Auth::id();
 
+        // Get folders and put decoded json in a collection.
         $folder_hash = "user:$id:discogs:folders:";
         $_folders = Redis::hgetall($folder_hash);
-
         $folders = collect();
         foreach ($_folders as $folder) {
             $folder = json_decode($folder);
             $folders->put($folder->id, $folder);
         }
 
+        // Get collection and put decoded json in a collection.
         $collection_hash = "user:$id:discogs:collection";
         $_collection = Redis::hgetall($collection_hash);
-
         $collection = collect();
         foreach ($_collection as $item) {
             $item = json_decode($item);
             $collection->put($item->id, $item);
         }
 
+        // Sort on artist, year.
+        $collection = $collection->sort(function ($a, $b) {
+            if ($a->basic_information->artists[0]->name === $b->basic_information->artists[0]->name) {
+                return $a->basic_information->year > $b->basic_information->year;
+            }
+            return $a->basic_information->artists[0]->name > $b->basic_information->artists[0]->name;
+        });
+
+        // Return view.
         return view('collection.index')
             ->with('folders', $folders)
             ->with('collection', $collection);
