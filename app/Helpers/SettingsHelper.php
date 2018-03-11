@@ -17,4 +17,17 @@ class SettingsHelper
         $value = decrypt(Redis::get($key));
         return $value;
     }
+
+    /**
+     * Encrypt and set setting in Redis store.
+     *
+     * @param $key
+     * @param $value
+     * @return mixed
+     */
+    public static function set($key, $value)
+    {
+        $value = encrypt($value);
+        return Redis::set($key, $value);
+    }
 }

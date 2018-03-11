@@ -2,6 +2,10 @@
 
 @section('navbar_primary_title', 'Settings')
 
+@section('navbar_secondary')
+    @include('settings._navbar', ['title' => 'Main'])
+@stop
+
 @section('content')
     <div>
         <h1>Settings</h1>
