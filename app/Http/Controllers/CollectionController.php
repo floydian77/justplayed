@@ -25,7 +25,7 @@ class CollectionController extends Controller
         $folders = collect();
         foreach ($_folders as $folder) {
             $folder = json_decode($folder);
-            $folders = $folders->merge([$folder]);
+            $folders->put($folder->id, $folder);
         }
 
         $collection_hash = "user:$id:discogs:collection";
@@ -34,9 +34,8 @@ class CollectionController extends Controller
         $collection = collect();
         foreach ($_collection as $item) {
             $item = json_decode($item);
-            $collection = $collection->merge([$item]);
+            $collection->put($item->id, $item);
         }
-//        dd($collection);
 
         return view('collection.index')
             ->with('folders', $folders)

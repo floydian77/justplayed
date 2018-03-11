@@ -12,46 +12,23 @@
 
         @include('partials._status')
 
-        <h2>Folders</h2>
-
         <div class="table-responsive">
             <table class="table table-striped">
                 <thead>
                 <tr>
-                    <th>Name</th>
-                    <th>Count</th>
-                    <th>id</th>
-                </tr>
-                </thead>
-                <tbody>
-                @foreach($folders as $folder)
-                    <tr>
-                        <td>{{$folder->name}}</td>
-                        <td>{{$folder->count}}</td>
-                        <td>{{$folder->id}}</td>
-                    </tr>
-                @endforeach
-                </tbody>
-            </table>
-        </div>
-
-        <h2>Collection</h2>
-
-        <div class="table-responsive">
-            <table class="table table-striped">
-                <thead>
-                <tr>
-                    <th>instance_id (this)</th>
-                    <th>folder_id</th>
-                    <th>id</th>
+                    <th>Artist</th>
+                    <th>Title</th>
+                    <th>Year</th>
+                    <th>Folder</th>
                 </tr>
                 </thead>
                 <tbody>
                 @foreach($collection as $item)
                     <tr>
-                        <td>{{$item->instance_id}}</td>
-                        <td>{{$item->folder_id}}</td>
-                        <td>{{$item->id}}</td>
+                        <td>{{$item->basic_information->artists[0]->name}}</td>
+                        <td>{{$item->basic_information->title}}</td>
+                        <td>{{$item->basic_information->year}}</td>
+                        <td>{{$folders[$item->folder_id]->name}}</td>
                     </tr>
                 @endforeach
                 </tbody>
