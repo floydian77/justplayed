@@ -26,7 +26,11 @@
                 @foreach($collection as $release)
                     <tr>
                         <td>{{$release->_artist}}</td>
-                        <td>{{$release->basic_information->title}}</td>
+                        <td>
+                            <a href="{{route('collection.show', $release->id)}}">
+                                {{$release->basic_information->title}}
+                            </a>
+                        </td>
                         <td>{{$release->basic_information->year}}</td>
                         <td>{{$folders[$release->folder_id]->name}}</td>
                     </tr>

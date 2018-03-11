@@ -59,7 +59,10 @@ class CollectionController extends Controller
      */
     public function show($id)
     {
-        //
+        $release = $this->getRelease($id);
+
+        return view('collection.show')
+            ->with('release', $release);
     }
 
     /**
@@ -92,6 +95,52 @@ class CollectionController extends Controller
         return redirect()
             ->route('collection.index')
             ->with('status', 'Synchronized collection');
+    }
+
+    /**
+     * Fetch release from Discogs and store in redis.
+     *
+     * @param $id
+     * @return mixed
+     */
+    private function fetchRelease($id)
+    {
+        // Fetch release from discogs
+        $response = $this->discogsService()
+            ->getRelease([
+                'id' => $id
+            ]);
+
+        $release = json_encode($response);
+        $key = sprintf(
+            "release:%d",
+            $response['id']
+        );
+
+        Redis::set($key, $release);
+        return json_decode($release);
+    }
+
+    /**
+     * Get release from redis.
+     *
+     * @param $id
+     * @return mixed
+     */
+    private function getRelease($id)
+    {
+        $key = sprintf(
+            "release:%d",
+            $id
+        );
+        $release = json_decode(Redis::get($key));
+
+        if (empty($release)) {
+            return $this->fetchRelease($id);
+        }
+
+        return $release;
+
     }
 
     /**
