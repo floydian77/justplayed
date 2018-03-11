@@ -57,4 +57,12 @@
             @endforeach
         </table>
     </div>
+
+    <div>
+        <form action="{{route('lastfm.scrobble', $release->id)}}" method="post">
+            @csrf
+
+            <input type="submit" value="Scrobble" class="btn btn-lg btn-danger">
+        </form>
+    </div>
 @stop
