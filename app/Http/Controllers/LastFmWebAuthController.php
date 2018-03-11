@@ -24,8 +24,30 @@ class LastFmWebAuthController extends Controller
             route('lastfm.auth.connect')
         );
 
+        $id = Auth::id();
+        $lastfmUsername = SettingsHelper::get("settings:user:$id:lastfm:username");
+
         return view('lastfm.auth.index')
-            ->with('authUrl', $authUrl);
+            ->with('authUrl', $authUrl)
+            ->with('lastfmUsername', $lastfmUsername);
+    }
+
+    public function disconnect()
+    {
+        $id = Auth::id();
+        SettingsHelper::del(
+            "settings:user:$id:lastfm:username",
+            "settings:user:$id:lastfm:sessionToken",
+            "settings:user:$id:lastfm:subscriber"
+        );
+
+        return redirect()
+            ->route('lastfm.auth.index')
+            ->with('warning', sprintf(
+                "Removed last.fm session. However you need still disconnect %s from last.fm %s",
+                config('app.name'),
+                "https://www.last.fm/settings/applications"
+            ));
     }
 
     /**

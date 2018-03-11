@@ -33,5 +33,6 @@ Route::group(['middleware' => ['auth']], function () {
     Route::group(['prefix' => 'lastfm'], function () {
         Route::get('/', 'LastFmWebAuthController@index')->name('lastfm.auth.index');
         Route::get('connect', 'LastFmWebAuthController@connect')->name('lastfm.auth.connect');
+        Route::get('disconnect', 'LastFmWebAuthController@disconnect')->name('lastfm.auth.disconnect');
     });
 });
