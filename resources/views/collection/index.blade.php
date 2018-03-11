@@ -35,5 +35,28 @@
             </table>
         </div>
 
+        <h2>Collection</h2>
+
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>instance_id (this)</th>
+                    <th>folder_id</th>
+                    <th>id</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach($collection as $item)
+                    <tr>
+                        <td>{{$item->instance_id}}</td>
+                        <td>{{$item->folder_id}}</td>
+                        <td>{{$item->id}}</td>
+                    </tr>
+                @endforeach
+                </tbody>
+            </table>
+        </div>
+
     </div>
 @stop

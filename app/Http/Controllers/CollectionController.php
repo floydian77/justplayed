@@ -18,8 +18,9 @@ class CollectionController extends Controller
     public function index()
     {
         $id = Auth::id();
-        $hash = "user:$id:discogs:folders:";
-        $_folders = Redis::hgetall($hash);
+
+        $folder_hash = "user:$id:discogs:folders:";
+        $_folders = Redis::hgetall($folder_hash);
 
         $folders = collect();
         foreach ($_folders as $folder) {
@@ -27,8 +28,19 @@ class CollectionController extends Controller
             $folders = $folders->merge([$folder]);
         }
 
+        $collection_hash = "user:$id:discogs:collection";
+        $_collection = Redis::hgetall($collection_hash);
+
+        $collection = collect();
+        foreach ($_collection as $item) {
+            $item = json_decode($item);
+            $collection = $collection->merge([$item]);
+        }
+//        dd($collection);
+
         return view('collection.index')
-            ->with('folders', $folders);
+            ->with('folders', $folders)
+            ->with('collection', $collection);
     }
 
     /**
@@ -56,6 +68,46 @@ class CollectionController extends Controller
             )
         );
 
+        $this->syncFolders($username);
+        $this->syncCollection($username);
+
+        return redirect()
+            ->route('collection.index')
+            ->with('status', 'Synchronized collection');
+    }
+
+    private function syncCollection($username, $page = 1)
+    {
+        $id = Auth::id();
+        $hash = "user:$id:discogs:collection";
+
+        if ($page == 1) {
+            Redis::del($hash);
+        }
+
+        $response = $this->discogsClient()
+            ->getCollectionItemsByFolder([
+                'username' => $username,
+                'folder_id' => 0,
+                'per_page' => 100,
+                'page' => $page
+            ]);
+
+        foreach ($response['releases'] as $item) {
+            $json = json_encode($item);
+            Redis::hset($hash, $item['instance_id'], $json);
+        }
+
+        $pages = $response['pagination']['pages'];
+        if ($page < $pages) {
+            return $this->syncCollection($username, $page + 1);
+        }
+
+        return $response;
+    }
+
+    private function syncFolders($username)
+    {
         $response = $this->discogsClient()
             ->getCollectionFolders([
                 'username' => $username
@@ -70,9 +122,7 @@ class CollectionController extends Controller
             Redis::hset($hash, $folder['id'], $json);
         }
 
-        return redirect()
-            ->route('collection.index')
-            ->with('status', 'Synchronized collection');
+        return $response;
     }
 
     private function discogsClient()
