@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "588f481768f07f4cafe16633128b9dfb",
+    "content-hash": "c173331f5020f7b9c3ab6b33e205dbe8",
     "packages": [
         {
             "name": "dnoegel/php-xdg-base-dir",
@@ -1034,6 +1034,58 @@
                 "storage"
             ],
             "time": "2018-03-01T10:27:04+00:00"
+        },
+        {
+            "name": "matto1990/lastfm-api",
+            "version": "v1.5.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/matt-oakes/PHP-Last.fm-API.git",
+                "reference": "27731e59a68f6a54df3ef61d665a33d42ff5ffe0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/matt-oakes/PHP-Last.fm-API/zipball/27731e59a68f6a54df3ef61d665a33d42ff5ffe0",
+                "reference": "27731e59a68f6a54df3ef61d665a33d42ff5ffe0",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "require-dev": {
+                "php": ">=5.3.3",
+                "phpunit/phpunit": "~4.8",
+                "vlucas/phpdotenv": "*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "LastFmApi\\": "src/lastfmapi/",
+                    "Tests\\": "tests"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Marcos",
+                    "email": "devilcius@gmail.com"
+                },
+                {
+                    "name": "Matt",
+                    "email": "matt@oakes.ws"
+                }
+            ],
+            "description": "Last.fm webservice client",
+            "homepage": "https://github.com/matto1990/PHP-Last.fm-API",
+            "keywords": [
+                "api",
+                "last.fm",
+                "webservice client"
+            ],
+            "time": "2018-03-09T07:22:31+00:00"
         },
         {
             "name": "monolog/monolog",

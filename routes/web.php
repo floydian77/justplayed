@@ -29,4 +29,11 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::get('settings', 'SettingsController@edit')->name('settings.edit');
     Route::put('settings', 'SettingsController@update')->name('settings.update');
+
+    Route::group(['prefix' => 'lastfm'], function () {
+        Route::get('/', 'LastFmWebAuthController@index')->name('lastfm.auth.index');
+        Route::get('connect', 'LastFmWebAuthController@connect')->name('lastfm.auth.connect');
+        Route::get('disconnect', 'LastFmWebAuthController@disconnect')->name('lastfm.auth.disconnect');
+        Route::post('scrobble/{release}', 'ScrobbleController@scrobble')->name('lastfm.scrobble');
+    });
 });
