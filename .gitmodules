@@ -1,3 +1,3 @@
 [submodule "docker"]
 	path = docker
-	url = git@github.com:floydian77/justplayed_docker.git
+	url = https://github.com/floydian77/redis_docker.git
