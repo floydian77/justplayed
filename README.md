@@ -2,8 +2,6 @@
 
 Import your collection from discogs and scrobble your CD's, LP's, to last.fm
 
-Offline scrobbler.
-
 ## Installation
 
 ### Docker container
@@ -28,50 +26,6 @@ It could take a while to build the container for the first time.
 
 ```bash
 $ docker-compose up -d
-```
-
-#### Composer
-
-How to install composer globally in container. For step 3, see https://getcomposer.org/download/ for the current hash.
-
-```bash
-$ docker-compose exec app bash
-$ cd ~
-$ curl -sS https://getcomposer.org/installer -o composer-setup.php
-$ php -r "if (hash_file('SHA384', 'composer-setup.php') === '669656bab3166a7aff8a7506b8cb2d1c292f042046c5a994c43155c0be6190fa0355160742ab2e1c88d40d5be660b410') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
-$ php composer-setup.php --install-dir=/usr/local/bin --filename=composer
-```
-
-#### Misc
-
-##### Build
-
-```bash
-$ docker-compose up -d
-```
-
-##### Start
-
-```bash
-$ docker-compose start
-```
-
-##### Stop
-
-```bash
-$ docker-compose stop
-```
-
-##### Rebuild
-
-```bash
-$ docker-compose up -d --build
-```
-
-##### Remove
-
-```bash
-$ docker-compose down
 ```
 
 ### Laravel
