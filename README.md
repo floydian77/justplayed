@@ -50,12 +50,36 @@ $ php -r "if (hash_file('SHA384', 'composer-setup.php') === '669656bab3166a7aff8
 $ php composer-setup.php --install-dir=/usr/local/bin --filename=composer
 ```
 
-#### Rebuild
+#### Misc
 
-How to rebuild the container.
+##### Build
+
+```bash
+$ docker-compose up -d
+```
+
+##### Start
+
+```bash
+$ docker-compose start
+```
+
+##### Stop
+
+```bash
+$ docker-compose stop
+```
+
+##### Rebuild
 
 ```bash
 $ docker-compose up -d --build
+```
+
+##### Remove
+
+```bash
+$ docker-compose down
 ```
 
 ### Laravel
