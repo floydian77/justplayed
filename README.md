@@ -26,15 +26,7 @@ $ chmod -R 1777 storage
 
 It could take a while to build the container for the first time.
 
-Note, nginx fails to start without ssl certificate, so after generating the certificates,
-restart the services.
-
 ```bash
-$ docker-compose up -d
-$ docker-compose exec app bash
-$ cd docker
-$ sh build-ssl-cert.sh
-$ exit
 $ docker-compose up -d
 ```
 
