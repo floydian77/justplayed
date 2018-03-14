@@ -49,3 +49,24 @@ Save them in `.env`
 LASTFM_API_KEY=my_api_key
 LASTFM_SECRET=my_secret
 ```
+
+## Usage
+
+### Create a new user
+
+```bash
+$ php artisan tinker
+>>> $user = new App\Models\User
+>>> $user->name = 'name'
+>>> $user->email = 'name@domain.tld'
+>>> $user->password = 'passwword'
+>>> $user->save()
+```
+
+### Synchronize discogs collection
+
+First login and set your discogs username and token.
+
+```bash
+$ php artisan discogs:sync
+```
