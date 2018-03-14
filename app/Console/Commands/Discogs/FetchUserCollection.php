@@ -2,23 +2,22 @@
 
 namespace App\Console\Commands\Discogs;
 
-use Illuminate\Console\Command;
 
-class SyncCollection extends Command
+class FetchUserCollection extends DiscogsCommand
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'discogs:sync-collection {id=1}';
+    protected $signature = 'discogs:fetch-user-collection {id=1}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Synchronize discogs collection';
+    protected $description = 'Fetch discogs user collection';
 
     /**
      * Create a new command instance.
@@ -37,8 +36,7 @@ class SyncCollection extends Command
      */
     public function handle()
     {
-        $this->call('discogs:fetch-folders', [
-            'id' => $this->argument('id')
-        ]);
+        parent::handle();
+        $this->info('Fetching user collection');
     }
 }
