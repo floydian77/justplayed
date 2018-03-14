@@ -11,7 +11,7 @@ class SyncCollection extends Command
      *
      * @var string
      */
-    protected $signature = 'discogs:sync-collection';
+    protected $signature = 'discogs:sync-collection {id=1}';
 
     /**
      * The console command description.
@@ -37,6 +37,8 @@ class SyncCollection extends Command
      */
     public function handle()
     {
-        //
+        $this->call('discogs:fetch-folders', [
+            'id' => $this->argument('id')
+        ]);
     }
 }
