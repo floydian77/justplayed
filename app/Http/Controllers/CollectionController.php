@@ -33,11 +33,6 @@ class CollectionController extends Controller
     {
         $release = $this->getRelease($id);
 
-        if (empty($release)) {
-            return redirect()
-                ->route('sync.fetch-release', $id);
-        }
-
         return view('collection.show')
             ->with('release', $release);
     }

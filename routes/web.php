@@ -22,7 +22,6 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::group(['prefix' => 'sync'], function () {
         Route::get('/', 'CollectionSyncController@index')->name('sync.index');
-        Route::get('fetch-release/{id}', 'CollectionSyncController@fetchRelease')->name('sync.fetch-release');
     });
     Route::resource('collection', 'CollectionController')->only(['index', 'show']);
 
