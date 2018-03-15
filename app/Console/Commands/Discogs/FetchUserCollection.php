@@ -13,7 +13,7 @@ class FetchUserCollection extends DiscogsCommand
      *
      * @var string
      */
-    protected $signature = 'discogs:fetch-user-collection {id=1}';
+    protected $signature = 'discogs:fetch-user-collection {--user=1 : User id}';
 
     /**
      * The console command description.

@@ -11,7 +11,7 @@ class FetchRelease extends Command
      *
      * @var string
      */
-    protected $signature = 'discogs:fetch-release {id}';
+    protected $signature = 'discogs:fetch-release {--user= : User id} {--release= : Release id}';
 
     /**
      * The console command description.

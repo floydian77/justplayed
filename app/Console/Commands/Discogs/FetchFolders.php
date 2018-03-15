@@ -11,7 +11,7 @@ class FetchFolders extends DiscogsCommand
      *
      * @var string
      */
-    protected $signature = 'discogs:fetch-folders {id=1}';
+    protected $signature = 'discogs:fetch-folders {--user=1 : User id}';
 
     /**
      * The console command description.

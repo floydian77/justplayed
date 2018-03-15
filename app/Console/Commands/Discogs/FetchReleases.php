@@ -12,7 +12,7 @@ class FetchReleases extends DiscogsCommand
      *
      * @var string
      */
-    protected $signature = 'discogs:fetch-releases {id=1}';
+    protected $signature = 'discogs:fetch-releases {--user=1 : User id}';
 
     /**
      * The console command description.
@@ -50,7 +50,7 @@ class FetchReleases extends DiscogsCommand
                 $id, $key+1, $total
             ));
             $this->call('discogs:fetch-release', [
-                'id' => $id
+                '--release' => $id
             ]);
         }
 

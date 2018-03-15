@@ -11,7 +11,7 @@ class Sync extends Command
      *
      * @var string
      */
-    protected $signature = 'discogs:sync {id=1}';
+    protected $signature = 'discogs:sync {--user=1 : User id}';
 
     /**
      * The console command description.
@@ -38,11 +38,11 @@ class Sync extends Command
     public function handle()
     {
         $this->call('discogs:fetch-folders', [
-            'id' => $this->argument('id')
+            '--user' => $this->option('user')
         ]);
 
         $this->call('discogs:fetch-user-collection', [
-            'id' => $this->argument('id')
+            '--user' => $this->option('user')
         ]);
     }
 }

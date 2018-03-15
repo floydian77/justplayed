@@ -31,7 +31,7 @@ abstract class DiscogsCommand extends Command
      */
     private function init()
     {
-        $this->id = $this->argument('id');
+        $this->id = $this->option('user');
 
         $this->username = SettingsHelper::get(sprintf(
             "settings:user:%d:discogs:username",
