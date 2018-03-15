@@ -3,6 +3,7 @@
 namespace App\Console\Commands\Discogs;
 
 
+use App\Helpers\DiscogsHelper;
 use Illuminate\Support\Facades\Redis;
 
 class FetchReleases extends DiscogsCommand
@@ -40,20 +41,58 @@ class FetchReleases extends DiscogsCommand
     {
         parent::handle();
 
-        $this->info("Fetching all releases");
+        $this->info("Fetching all releases\n");
 
         $ids = $this->fetchIds();
         $total = count($ids);
-        foreach($ids as $key => $id) {
+        $n = 1;
+        foreach($ids as $id) {
             $this->line(sprintf(
                 "Fetching release:%d (%d / %d)",
-                $id, $key+1, $total
+                $id, $n, $total
             ));
-            $this->call('discogs:fetch-release', [
-                '--release' => $id
-            ]);
-        }
 
+            $release = $this->fetchRelease($id);
+            $this->storeRelease($release);
+
+            $n++;
+        }
+    }
+
+    /**
+     * Fetch release from discogs.
+     *
+     * @param $id
+     * @return mixed
+     */
+    private function fetchRelease($id)
+    {
+        $release = $this->service
+            ->getRelease([
+                'id' => $id
+            ]);
+
+        $this->line(sprintf(
+            "Fetched release %d: %s\n",
+            $id,
+            $release['title']
+        ));
+
+        return $release;
+    }
+
+    /**
+     * Store release in redis.
+     *
+     * @param $release
+     */
+    private function  storeRelease($release)
+    {
+        Redis::hset(
+            'discogs:releases',
+            $release->id,
+            json_encode($release)
+        );
     }
 
     /**
