@@ -95,11 +95,10 @@ class CollectionController extends Controller
      */
     private function getRelease($id)
     {
-        $key = sprintf(
-            "release:%d",
-            $id
+        $release = json_decode(Redis::hget(
+            'discogs:releases',
+            $id)
         );
-        $release = json_decode(Redis::get($key));
 
         return $release;
     }
