@@ -52,5 +52,9 @@ class Sync extends Command
         $this->call('discogs:fetch-masters', [
             '--user' => $this->option('user')
         ]);
+
+        $this->call('discogs:post-process', [
+            '--user' => $this->option('user')
+        ]);
     }
 }
