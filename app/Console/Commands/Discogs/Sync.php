@@ -44,5 +44,13 @@ class Sync extends Command
         $this->call('discogs:fetch-user-collection', [
             '--user' => $this->option('user')
         ]);
+
+        $this->call('discogs:fetch-releases', [
+            '--user' => $this->option('user')
+        ]);
+
+        $this->call('discogs:fetch-masters', [
+            '--user' => $this->option('user')
+        ]);
     }
 }

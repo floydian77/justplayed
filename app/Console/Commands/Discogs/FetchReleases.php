@@ -45,6 +45,12 @@ class FetchReleases extends DiscogsCommand
 
         $ids = $this->fetchIds();
         $total = count($ids);
+
+        if($total == 0) {
+            $this->line('No releases to fetch.');
+            return;
+        }
+
         $n = 1;
         foreach($ids as $id) {
             $this->line(sprintf(
