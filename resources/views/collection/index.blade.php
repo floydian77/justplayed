@@ -6,9 +6,21 @@
     @include('collection._navbar', ['title' => 'Index'])
 @stop
 
+@section('navbar_form')
+    <form class="form-inline my-2 my-lg-0">
+        <select id="folder_id" class="form-control mr-sm-2">
+            @foreach($folders as $folder)
+                <option value="{{$folder->id}}" {{ $folder_id == $folder->id ? 'selected' : '' }}>
+                    {{$folder->name}}
+                </option>
+            @endforeach
+        </select>
+    </form>
+@stop
+
 @section('content')
     <div>
-        <h1>Collection</h1>
+        <h1>Folder: {{$folders[$folder_id]->name}} ({{$folders[$folder_id]->count}})</h1>
 
         @include('partials._status')
 
@@ -42,4 +54,12 @@
         </div>
 
     </div>
+@stop
+
+@section('scripts')
+    <script>
+        $('#folder_id').on("change", (e) => {
+            $(location).attr('href', "?folder=".concat($('#folder_id').val()));
+        });
+    </script>
 @stop

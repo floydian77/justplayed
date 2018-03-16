@@ -24,6 +24,8 @@
                 @section('navbar_secondary')
                 @show
             </ul>
+            @section('navbar_form')
+            @show
         </div>
     @endif
 </nav>
