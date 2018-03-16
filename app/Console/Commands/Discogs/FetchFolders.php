@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands\Discogs;
 
+use App\Helpers\RedisHash;
 use Illuminate\Support\Facades\Redis;
 
 class FetchFolders extends DiscogsCommand
@@ -70,13 +71,13 @@ class FetchFolders extends DiscogsCommand
      */
     private function setUserCollectionFolders($folders)
     {
-        // Set folder hash
-        $hashName = "user:$this->id:discogs:folders:";
-        Redis::pipeline(function($pipe) use ($hashName, $folders) {
-            $pipe->del($hashName);
+        Redis::pipeline(function($pipe) use ($folders) {
+            $pipe->del(
+                RedisHash::folders($this->id)
+            );
             foreach($folders as $folder) {
                 $pipe->hset(
-                    $hashName,
+                    RedisHash::folders($this->id),
                     $folder['id'],
                     json_encode($folder)
                 );

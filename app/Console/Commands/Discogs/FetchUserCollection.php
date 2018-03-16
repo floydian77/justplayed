@@ -4,6 +4,7 @@ namespace App\Console\Commands\Discogs;
 
 
 use App\Helpers\DiscogsHelper;
+use App\Helpers\RedisHash;
 use Illuminate\Support\Facades\Redis;
 
 class FetchUserCollection extends DiscogsCommand
@@ -87,14 +88,12 @@ class FetchUserCollection extends DiscogsCommand
      */
     private function storeUserCollection()
     {
-        $hashName = "user:$this->id:discogs:collection";
-
-        Redis::pipeline(function($pipe) use ($hashName) {
-            $pipe->del($hashName);
+        Redis::pipeline(function($pipe) {
+            $pipe->del(RedisHash::collection($this->id));
 
             foreach($this->releases as $release) {
                 $pipe->hset(
-                    $hashName,
+                    RedisHash::collection($this->id),
                     $release['instance_id'],
                     json_encode($release)
                 );

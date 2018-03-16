@@ -4,6 +4,7 @@ namespace App\Console\Commands\Discogs;
 
 
 use App\Helpers\DiscogsHelper;
+use App\Helpers\RedisHash;
 use Illuminate\Support\Facades\Redis;
 
 class ProcessUserCollection extends DiscogsCommand
@@ -41,15 +42,14 @@ class ProcessUserCollection extends DiscogsCommand
     {
         parent::handle();
 
-        $collectionHashName = "user:$this->id:discogs:collection";
         $collection = $this->decode(
-            Redis::hgetall($collectionHashName)
+            Redis::hgetall(RedisHash::collection($this->id))
         );
         $releases = $this->decode(
-            Redis::hgetall('discogs:releases')
+            Redis::hgetall(RedisHash::releases())
         );
         $masters = $this->decode(
-            Redis::hgetall('discogs:masters')
+            Redis::hgetall(RedisHash::masters())
         );
 
         foreach($collection as $key => $item) {
@@ -71,10 +71,10 @@ class ProcessUserCollection extends DiscogsCommand
             $collection[$key] = $item;
         }
 
-        Redis::pipeline(function($pipe) use ($collection, $collectionHashName) {
+        Redis::pipeline(function($pipe) use ($collection) {
             foreach($collection as $item) {
                 $pipe->hset(
-                    $collectionHashName,
+                    RedisHash::collection($this->id),
                     $item->instance_id,
                     json_encode($item)
                 );

@@ -3,7 +3,7 @@
 namespace App\Console\Commands\Discogs;
 
 
-use App\Helpers\DiscogsHelper;
+use App\Helpers\RedisHash;
 use Illuminate\Support\Facades\Redis;
 
 class FetchReleases extends DiscogsCommand
@@ -95,7 +95,7 @@ class FetchReleases extends DiscogsCommand
     private function  storeRelease($release)
     {
         Redis::hset(
-            'discogs:releases',
+            RedisHash::releases(),
             $release->id,
             json_encode($release)
         );
@@ -109,8 +109,9 @@ class FetchReleases extends DiscogsCommand
     private function fetchIds()
     {
         // Get ids of all releases in user collection.
-        $userCollectionHashName = "user:$this->id:discogs:collection";
-        $collection = Redis::hgetall($userCollectionHashName);
+        $collection = Redis::hgetall(
+            RedisHash::collection($this->id)
+        );
         $collectionIds = array();
         foreach($collection as $item) {
             $release = json_decode($item);
@@ -118,8 +119,7 @@ class FetchReleases extends DiscogsCommand
         }
 
         // Get ids of all fetched releases
-        $releasesHashName = "discogs:releases";
-        $releaseIds = Redis::hkeys($releasesHashName);
+        $releaseIds = Redis::hkeys(RedisHash::releases());
 
         // Get ids of releases to fetch
         $fetchIds = array_diff($collectionIds, $releaseIds);

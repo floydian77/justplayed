@@ -3,6 +3,7 @@
 namespace App\Console\Commands\Discogs;
 
 
+use App\Helpers\RedisHash;
 use Illuminate\Support\Facades\Redis;
 
 class FetchMasters extends DiscogsCommand
@@ -83,7 +84,7 @@ class FetchMasters extends DiscogsCommand
     private function storeMaster($master)
     {
         Redis::hset(
-            'discogs:masters',
+            RedisHash::masters(),
             $master['id'],
             json_encode($master)
         );
@@ -97,7 +98,7 @@ class FetchMasters extends DiscogsCommand
     private function fetchIds()
     {
         // Get all master ids from releases
-        $releases = Redis::hgetall('discogs:releases');
+        $releases = Redis::hgetall(RedisHash::releases());
         $releaseIds = array();
         foreach($releases as $release) {
             $release = json_decode($release);
@@ -107,7 +108,7 @@ class FetchMasters extends DiscogsCommand
         $releaseIds = array_unique($releaseIds);
 
         // Get all ids from stored masters
-        $masterIds = Redis::hkeys('discogs:masters');
+        $masterIds = Redis::hkeys(RedisHash::masters());
 
         $fetchIds = array_diff($releaseIds, $masterIds);
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\RedisHash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redis;
 
@@ -47,11 +48,10 @@ class CollectionController extends Controller
      */
     private function getCollection()
     {
-        $id = Auth::id();
-
         // Get collection and put decoded json in a collection.
-        $collectionHashName = "user:$id:discogs:collection";
-        $_collection = Redis::hgetall($collectionHashName);
+        $_collection = Redis::hgetall(
+            RedisHash::collection(Auth::id())
+        );
         $collection = collect();
         foreach ($_collection as $release) {
             $release = json_decode($release);
@@ -82,11 +82,10 @@ class CollectionController extends Controller
      */
     private function getFolders()
     {
-        $id = Auth::id();
-
         // Get folders and put decoded json in a collection.
-        $folderHashName = "user:$id:discogs:folders:";
-        $_folders = Redis::hgetall($folderHashName);
+        $_folders = Redis::hgetall(
+            RedisHash::folders(Auth::id())
+        );
         $folders = collect();
         foreach ($_folders as $folder) {
             $folder = json_decode($folder);
@@ -105,7 +104,7 @@ class CollectionController extends Controller
     private function getRelease($id)
     {
         $release = json_decode(Redis::hget(
-            'discogs:releases',
+            RedisHash::releases(),
             $id)
         );
 
