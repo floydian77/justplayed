@@ -3,9 +3,34 @@
 namespace App\Helpers;
 
 
+use Discogs\ClientFactory;
+use Discogs\Subscriber\ThrottleSubscriber;
+
 class DiscogsHelper
 {
     const DEFAULT_DURATION = "3:00";
+
+    /**
+     * Initialize Discogs service.
+     *
+     * @param $token Discogs user personal access token
+     * @return \GuzzleHttp\Command\Guzzle\GuzzleClient
+     */
+    public static function discogsService($token)
+    {
+        $client = ClientFactory::factory([
+            'defaults' => [
+                'headers' => [
+                    'User-Agent' => 'justplayed/0.0 +https://github.com/floydian77/justplayed'
+                ],
+                'query' => [
+                    'token' => $token
+                ]
+            ]
+        ]);
+        $client->getHttpClient()->getEmitter()->attach(new ThrottleSubscriber());
+        return $client;
+    }
 
     /**
      * Merge all artists from a release into one string and clean up name,
