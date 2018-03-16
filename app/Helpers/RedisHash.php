@@ -56,6 +56,26 @@ class RedisHash
     }
 
     /**
+     * Hash name for artists.
+     *
+     * @return string
+     */
+    public static function artists()
+    {
+        return "discogs:artists";
+    }
+
+    /**
+     * List with artists that are placeholders, such as Various.
+     *
+     * @return string
+     */
+    public static function artistsIgnore()
+    {
+        return "discogs:artists:ignore";
+    }
+
+    /**
      * Get hash from redis and json decode all items.
      *
      * @param $hash
