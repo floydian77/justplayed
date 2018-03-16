@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Redis;
 
 class CollectionController extends Controller
 {
+    private $userCollection;
+
     /**
      * Display a listing of the resource.
      *
@@ -15,12 +17,13 @@ class CollectionController extends Controller
     public function index()
     {
         $folders = $this->getFolders();
-        $collection = $this->getCollection();
+        $this->getCollection();
+        $this->sortCollection();
 
         // Return view.
         return view('collection.index')
             ->with('folders', $folders)
-            ->with('collection', $collection);
+            ->with('collection', $this->userCollection);
     }
 
     /**
@@ -55,15 +58,21 @@ class CollectionController extends Controller
             $collection->put($release->id, $release);
         }
 
+        $this->userCollection = $collection;
+    }
+
+    private function sortCollection()
+    {
         // Sort on artist, year.
-        $collection = $collection->sort(function ($a, $b) {
+        $this->userCollection = $this->userCollection->sort(function ($a, $b) {
             if ($a->_artist === $b->_artist) {
-                return $a->basic_information->year > $b->basic_information->year;
+                if ($a->_year_master == $b->_year_master) {
+                    return $a->basic_information->year > $b->basic_information->year;
+                }
+                return $a->_year_master > $b->_year_master;
             }
             return $a->_artist > $b->_artist;
         });
-
-        return $collection;
     }
 
     /**
