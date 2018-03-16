@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Helpers\RedisHash;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Redis;
 
 class CollectionController extends Controller
 {
@@ -17,8 +16,14 @@ class CollectionController extends Controller
      */
     public function index()
     {
-        $folders = $this->getFolders();
-        $this->getCollection();
+        $folders = RedisHash::hgetall(
+            RedisHash::folders(Auth::id())
+        );
+        $this->userCollection = collect(
+            RedisHash::hgetall(
+                RedisHash::collection(Auth::id())
+            )
+        );
         $this->sortCollection();
 
         // Return view.
@@ -35,30 +40,13 @@ class CollectionController extends Controller
      */
     public function show($id)
     {
-        $release = $this->getRelease($id);
+        $release = RedisHash::hget(
+            RedisHash::releases(),
+            $id
+        );
 
         return view('collection.show')
             ->with('release', $release);
-    }
-
-    /**
-     * Get collection from redis and sort it.
-     *
-     * @return \Illuminate\Support\Collection|static
-     */
-    private function getCollection()
-    {
-        // Get collection and put decoded json in a collection.
-        $_collection = Redis::hgetall(
-            RedisHash::collection(Auth::id())
-        );
-        $collection = collect();
-        foreach ($_collection as $release) {
-            $release = json_decode($release);
-            $collection->put($release->id, $release);
-        }
-
-        $this->userCollection = $collection;
     }
 
     private function sortCollection()
@@ -73,41 +61,5 @@ class CollectionController extends Controller
             }
             return $a->_artist > $b->_artist;
         });
-    }
-
-    /**
-     * Get folders from redis and sort it.
-     *
-     * @return \Illuminate\Support\Collection
-     */
-    private function getFolders()
-    {
-        // Get folders and put decoded json in a collection.
-        $_folders = Redis::hgetall(
-            RedisHash::folders(Auth::id())
-        );
-        $folders = collect();
-        foreach ($_folders as $folder) {
-            $folder = json_decode($folder);
-            $folders->put($folder->id, $folder);
-        }
-
-        return $folders;
-    }
-
-    /**
-     * Get release from redis.
-     *
-     * @param $id
-     * @return mixed
-     */
-    private function getRelease($id)
-    {
-        $release = json_decode(Redis::hget(
-            RedisHash::releases(),
-            $id)
-        );
-
-        return $release;
     }
 }

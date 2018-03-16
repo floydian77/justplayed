@@ -8,7 +8,6 @@ use App\Helpers\RedisHash;
 use App\Helpers\SettingsHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Redis;
 use LastFmApi\Api\AuthApi;
 use LastFmApi\Api\TrackApi;
 use LastFmApi\Exception\InvalidArgumentException;
@@ -17,8 +16,9 @@ class ScrobbleController extends Controller
 {
     public function scrobble(Request $request, $release)
     {
-        $release = json_decode(
-            Redis::hget(RedisHash::releases(), $release)
+        $release = RedisHash::hget(
+            RedisHash::releases(),
+            $release
         );
 
         $artist = DiscogsHelper::mergeArtists($release->artists);

@@ -3,6 +3,8 @@
 namespace App\Helpers;
 
 
+use Illuminate\Support\Facades\Redis;
+
 class RedisHash
 {
     /**
@@ -51,5 +53,36 @@ class RedisHash
     public static function masters()
     {
         return "discogs:masters";
+    }
+
+    /**
+     * Get hash from redis and json decode all items.
+     *
+     * @param $hash
+     * @return array
+     */
+    public static function hgetall($hash)
+    {
+        $result = Redis::hgetall($hash);
+        $data = array();
+        foreach ($result as $key => $value) {
+            $data[$key] = json_decode($value);
+        }
+
+        return $data;
+    }
+
+    /**
+     * Get key from hash and json decode it.
+     *
+     * @param $hash
+     * @param $key
+     * @return mixed
+     */
+    public static function hget($hash, $key)
+    {
+        $result = Redis::hget($hash, $key);
+
+        return json_decode($result);
     }
 }
