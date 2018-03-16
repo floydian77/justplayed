@@ -69,17 +69,17 @@ class ProcessUserCollection extends DiscogsCommand
             }
 
             $collection[$key] = $item;
-            break;
         }
 
         Redis::pipeline(function($pipe) use ($collection, $collectionHashName) {
             foreach($collection as $item) {
                 $pipe->hset(
                     $collectionHashName,
-                    $item->id,
+                    $item->instance_id,
                     json_encode($item)
                 );
             }
+
         });
     }
 

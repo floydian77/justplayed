@@ -73,7 +73,7 @@ class FetchFolders extends DiscogsCommand
         // Set folder hash
         $hashName = "user:$this->id:discogs:folders:";
         Redis::pipeline(function($pipe) use ($hashName, $folders) {
-            Redis::del($hashName);
+            $pipe->del($hashName);
             foreach($folders as $folder) {
                 $pipe->hset(
                     $hashName,

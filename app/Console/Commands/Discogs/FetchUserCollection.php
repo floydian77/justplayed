@@ -90,21 +90,15 @@ class FetchUserCollection extends DiscogsCommand
         $hashName = "user:$this->id:discogs:collection";
 
         Redis::pipeline(function($pipe) use ($hashName) {
-            Redis::del($hashName);
+            $pipe->del($hashName);
 
             foreach($this->releases as $release) {
-                $release = json_decode(json_encode($release));
-                $release->_artist = DiscogsHelper::mergeArtists(
-                    $release->basic_information->artists
-                );
-
                 $pipe->hset(
                     $hashName,
-                    $release->instance_id,
+                    $release['instance_id'],
                     json_encode($release)
                 );
             }
         });
     }
-
 }

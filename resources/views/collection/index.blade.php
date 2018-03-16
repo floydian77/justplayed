@@ -18,7 +18,8 @@
                 <tr>
                     <th>Artist</th>
                     <th>Title</th>
-                    <th>Year</th>
+                    <th>Released</th>
+                    <th>Rereleased</th>
                     <th>Folder</th>
                 </tr>
                 </thead>
@@ -31,6 +32,7 @@
                                 {{$release->basic_information->title}}
                             </a>
                         </td>
+                        <td>{{$release->_year_master}}</td>
                         <td>{{$release->basic_information->year}}</td>
                         <td>{{$folders[$release->folder_id]->name}}</td>
                     </tr>
