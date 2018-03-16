@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "c173331f5020f7b9c3ab6b33e205dbe8",
+    "content-hash": "55064fe131d77ae0c0e7c19614639d10",
     "packages": [
         {
             "name": "dnoegel/php-xdg-base-dir",
@@ -2723,53 +2723,6 @@
         }
     ],
     "packages-dev": [
-        {
-            "name": "ajthinking/tinx",
-            "version": "v2.1.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/furey/tinx.git",
-                "reference": "eb92e2df360a6bd14db2a183cf01ef41eb1d547f"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/furey/tinx/zipball/eb92e2df360a6bd14db2a183cf01ef41eb1d547f",
-                "reference": "eb92e2df360a6bd14db2a183cf01ef41eb1d547f",
-                "shasum": ""
-            },
-            "require": {
-                "illuminate/container": "5.2.* || 5.3.* || 5.4.* || 5.5.* || 5.6.*",
-                "laravel/tinker": "~1.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^6.4|^7.0"
-            },
-            "type": "laravel",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Ajthinking\\Tinx\\TinxServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Ajthinking\\Tinx\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Anders Jürisoo",
-                    "email": "jurisoo@hotmail.com"
-                }
-            ],
-            "description": "Inject cool stuff into Laravel Tinker and make it restartable.",
-            "time": "2018-02-20T02:22:56+00:00"
-        },
         {
             "name": "doctrine/instantiator",
             "version": "1.1.0",

@@ -8,7 +8,7 @@ use Discogs\Subscriber\ThrottleSubscriber;
 
 class DiscogsHelper
 {
-    const DEFAULT_DURATION = "3:00";
+    const DEFAULT_TRACK_DURATION = "3:00";
 
     /**
      * Initialize Discogs service.
@@ -58,16 +58,18 @@ class DiscogsHelper
      *
      * @example 4:30 => 270
      *
-     * @todo check if track is longer than a hour.
-     *
      * @param $duration
      * @return false|int
      */
-    public static function durationToSeconds($duration = self::DEFAULT_DURATION)
+    public static function durationToSeconds($duration = self::DEFAULT_TRACK_DURATION)
     {
+        // Add hour to string when duration is less then a hour.
+        if (substr_count($duration, ':') == 1) {
+            $duration = "0:$duration";
+        }
         $seconds = strtotime(
             sprintf(
-                "1970-01-01 0:%s UTC",
+                "1970-01-01 %s UTC",
                 $duration
             )
         );

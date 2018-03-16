@@ -38,10 +38,12 @@
                         <a href="{{$release->uri}}" target="_blank">r{{$release->id}}</a>
                     </td>
                 </tr>
-                <tr>
-                    <th>Notes</th>
-                    <td>{!! nl2br($release->notes) !!}</td>
-                </tr>
+                @unless(empty($release->notes))
+                    <tr>
+                        <th>Notes</th>
+                        <td>{!! nl2br($release->notes) !!}</td>
+                    </tr>
+                @endunless
             </table>
         </div>
 
