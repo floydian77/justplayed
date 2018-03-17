@@ -61,8 +61,11 @@ class FetchArtists extends DiscogsCommand
 
             // Fetch release
             $artist = $this->fetchArtist($id);
-            // Store it
-            $this->storeArtist($artist);
+
+            if ($artist != null) {
+                // Store it
+                $this->storeArtist($artist);
+            }
 
             $n++;
         }

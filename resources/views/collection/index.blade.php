@@ -8,6 +8,12 @@
 
 @section('navbar_form')
     <form class="form-inline my-2 my-lg-0">
+        <select id="artist_id" class="form-control mr-sm-2">
+            <option value="">Select artist</option>
+            @foreach($artists as $artist)
+                <option>{{$artist->name}}</option>
+            @endforeach
+        </select>
         <select id="folder_id" class="form-control mr-sm-2">
             @foreach($folders as $folder)
                 <option value="{{$folder->id}}" {{ $folder_id == $folder->id ? 'selected' : '' }}>

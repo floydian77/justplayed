@@ -33,11 +33,17 @@ class CollectionController extends Controller
         $this->filterCollection($folder_id);
         $this->sortCollection();
 
+        $artists = collect(RedisHash::hgetall(
+            RedisHash::artists()
+        ));
+        $artists = $artists->sortBy('name');
+
         // Return view.
         return view('collection.index')
+            ->with('collection', $this->userCollection)
+            ->with('artists', $artists)
             ->with('folders', $folders)
-            ->with('folder_id', $folder_id)
-            ->with('collection', $this->userCollection);
+            ->with('folder_id', $folder_id);
     }
 
     /**
