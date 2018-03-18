@@ -19,45 +19,58 @@
 @stop
 
 @section('content')
-    <div>
-        <h1>Folder: {{$folders[$folder_id]->name}} ({{$folders[$folder_id]->count}})</h1>
-
-        @include('partials._status')
-
-        <div class="table-responsive">
-            <table class="table table-striped">
-                <thead>
-                <tr>
-                    <th>Artist</th>
-                    <th>Title</th>
-                    <th>Released</th>
-                    <th>Rereleased</th>
-                    <th>Folder</th>
-                </tr>
-                </thead>
-                <tbody>
-                @foreach($collection as $key => $group)
-                    <tr>
-                        <td colspan="5" class="text-center"><h2>{{$key}}</h2></td>
-                    </tr>
-                    @foreach($group as $release)
-                        <tr>
-                            <td>{{$release->_artist}}</td>
-                            <td>
-                                <a href="{{route('collection.show', $release->id)}}">
-                                    {{$release->basic_information->title}}
-                                </a>
-                            </td>
-                            <td>{{$release->_year_master}}</td>
-                            <td>{{$release->basic_information->year}}</td>
-                            <td>{{$folders[$release->folder_id]->name}}</td>
-                        </tr>
+    <div class="container-fluid">
+        <div class="row">
+            <nav class="col-sm-3 col-md-2 hidden-xs-down bg-faded sidebar">
+                <ul class="nav nav-pills flex-column">
+                    @foreach($collection as $key => $group)
+                        <li>
+                            <a href="#{{$key}}">{{$key}}</a>
+                        </li>
                     @endforeach
-                @endforeach
-                </tbody>
-            </table>
-        </div>
+                </ul>
+            </nav>
 
+            <div class="col-sm-9 offset-sm-3 col-md-10 offset-md-2 pt-3">
+                <h1>Folder: {{$folders[$folder_id]->name}} ({{$folders[$folder_id]->count}})</h1>
+
+                @include('partials._status')
+
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>Artist</th>
+                            <th>Title</th>
+                            <th>Released</th>
+                            <th>Rereleased</th>
+                            <th>Folder</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach($collection as $key => $group)
+                            <tr>
+                                <td colspan="5" class="text-center"><h2 id="{{$key}}">{{$key}}</h2></td>
+                            </tr>
+                            @foreach($group as $release)
+                                <tr>
+                                    <td>{{$release->_artist}}</td>
+                                    <td>
+                                        <a href="{{route('collection.show', $release->id)}}">
+                                            {{$release->basic_information->title}}
+                                        </a>
+                                    </td>
+                                    <td>{{$release->_year_master}}</td>
+                                    <td>{{$release->basic_information->year}}</td>
+                                    <td>{{$folders[$release->folder_id]->name}}</td>
+                                </tr>
+                            @endforeach
+                        @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 @stop
 
