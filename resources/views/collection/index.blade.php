@@ -6,9 +6,27 @@
     @include('collection._navbar', ['title' => 'Index'])
 @stop
 
+@section('navbar_form')
+    <form class="form-inline my-2 my-lg-0">
+        <select id="caption" class="form-control mr-sm-2">
+            @foreach($collection as $key => $value)
+                <option value="{{$key}}">{{$key}}</option>
+            @endforeach
+        </select>
+
+        <select id="folder_id" class="form-control mr-sm-2">
+            @foreach($folders as $folder)
+                <option value="{{$folder->id}}" {{ $folder_id == $folder->id ? 'selected' : '' }}>
+                    {{$folder->name}}
+                </option>
+            @endforeach
+        </select>
+    </form>
+@stop
+
 @section('content')
     <div>
-        <h1>Collection</h1>
+        <h1>Folder: {{$folders[$folder_id]->name}} ({{$folders[$folder_id]->count}})</h1>
 
         @include('partials._status')
 
@@ -24,22 +42,38 @@
                 </tr>
                 </thead>
                 <tbody>
-                @foreach($collection as $release)
+                @foreach($collection as $key => $group)
                     <tr>
-                        <td>{{$release->_artist}}</td>
-                        <td>
-                            <a href="{{route('collection.show', $release->id)}}">
-                                {{$release->basic_information->title}}
-                            </a>
-                        </td>
-                        <td>{{$release->_year_master}}</td>
-                        <td>{{$release->basic_information->year}}</td>
-                        <td>{{$folders[$release->folder_id]->name}}</td>
+                        <td colspan="5" class="text-center"><h2 id="{{$key}}">{{$key}}</h2></td>
                     </tr>
+                    @foreach($group as $release)
+                        <tr>
+                            <td>{{$release->_artist}}</td>
+                            <td>
+                                <a href="{{route('collection.show', $release->id)}}">
+                                    {{$release->basic_information->title}}
+                                </a>
+                            </td>
+                            <td>{{$release->_year_master}}</td>
+                            <td>{{$release->basic_information->year}}</td>
+                            <td>{{$folders[$release->folder_id]->name}}</td>
+                        </tr>
+                    @endforeach
                 @endforeach
                 </tbody>
             </table>
         </div>
-
     </div>
+@stop
+
+@section('scripts')
+    <script>
+        $('#caption').on("change", (e) => {
+            $(location).attr('href', "#" + $('#caption').val());
+        });
+
+        $('#folder_id').on("change", (e) => {
+            $(location).attr('href', "?folder=".concat($('#folder_id').val()));
+        });
+    </script>
 @stop

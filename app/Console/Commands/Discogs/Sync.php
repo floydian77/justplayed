@@ -53,6 +53,10 @@ class Sync extends Command
             '--user' => $this->option('user')
         ]);
 
+        $this->call('discogs:fetch-artists', [
+            '--user' => $this->option('user')
+        ]);
+
         $this->call('discogs:post-process', [
             '--user' => $this->option('user')
         ]);

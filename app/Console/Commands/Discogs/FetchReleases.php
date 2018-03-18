@@ -96,7 +96,7 @@ class FetchReleases extends DiscogsCommand
     {
         Redis::hset(
             RedisHash::releases(),
-            $release->id,
+            $release['id'],
             json_encode($release)
         );
     }

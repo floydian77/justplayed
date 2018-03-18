@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\RedisHash;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class CollectionController extends Controller
@@ -14,22 +15,34 @@ class CollectionController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        $folder_id = intval($request->get('folder'));
+
         $folders = RedisHash::hgetall(
             RedisHash::folders(Auth::id())
         );
+        ksort($folders);
+
         $this->userCollection = collect(
             RedisHash::hgetall(
                 RedisHash::collection(Auth::id())
             )
         );
+
+        $this->filterCollection($folder_id);
         $this->sortCollection();
+
+        $this->userCollection = $this->userCollection
+            ->groupBy(function($item, $key) {
+                return substr($item->_artist, 0, 1);
+            });
 
         // Return view.
         return view('collection.index')
+            ->with('collection', $this->userCollection)
             ->with('folders', $folders)
-            ->with('collection', $this->userCollection);
+            ->with('folder_id', $folder_id);
     }
 
     /**
@@ -61,5 +74,16 @@ class CollectionController extends Controller
             }
             return $a->_artist > $b->_artist;
         });
+    }
+
+    private function filterCollection($folder_id)
+    {
+        // Folder.id 0 All, don't filter
+        if ($folder_id == 0) return;
+
+        $this->userCollection = $this->userCollection
+            ->filter(function($item) use ($folder_id) {
+                return $item->folder_id == $folder_id;
+            });
     }
 }
