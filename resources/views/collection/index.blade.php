@@ -8,6 +8,12 @@
 
 @section('navbar_form')
     <form class="form-inline my-2 my-lg-0">
+        <select id="caption" class="form-control mr-sm-2">
+            @foreach($collection as $key => $value)
+                <option value="{{$key}}">{{$key}}</option>
+            @endforeach
+        </select>
+
         <select id="folder_id" class="form-control mr-sm-2">
             @foreach($folders as $folder)
                 <option value="{{$folder->id}}" {{ $folder_id == $folder->id ? 'selected' : '' }}>
@@ -19,63 +25,53 @@
 @stop
 
 @section('content')
-    <div class="container-fluid">
-        <div class="row">
-            <nav class="col-sm-3 col-md-2 hidden-xs-down bg-faded sidebar">
-                <ul class="nav nav-pills flex-column">
-                    @foreach($collection as $key => $group)
-                        <li>
-                            <a href="#{{$key}}">{{$key}}</a>
-                        </li>
-                    @endforeach
-                </ul>
-            </nav>
+    <div>
+        <h1>Folder: {{$folders[$folder_id]->name}} ({{$folders[$folder_id]->count}})</h1>
 
-            <div class="col-sm-9 offset-sm-3 col-md-10 offset-md-2 pt-3">
-                <h1>Folder: {{$folders[$folder_id]->name}} ({{$folders[$folder_id]->count}})</h1>
+        @include('partials._status')
 
-                @include('partials._status')
-
-                <div class="table-responsive">
-                    <table class="table table-striped">
-                        <thead>
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Artist</th>
+                    <th>Title</th>
+                    <th>Released</th>
+                    <th>Rereleased</th>
+                    <th>Folder</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach($collection as $key => $group)
+                    <tr>
+                        <td colspan="5" class="text-center"><h2 id="{{$key}}">{{$key}}</h2></td>
+                    </tr>
+                    @foreach($group as $release)
                         <tr>
-                            <th>Artist</th>
-                            <th>Title</th>
-                            <th>Released</th>
-                            <th>Rereleased</th>
-                            <th>Folder</th>
+                            <td>{{$release->_artist}}</td>
+                            <td>
+                                <a href="{{route('collection.show', $release->id)}}">
+                                    {{$release->basic_information->title}}
+                                </a>
+                            </td>
+                            <td>{{$release->_year_master}}</td>
+                            <td>{{$release->basic_information->year}}</td>
+                            <td>{{$folders[$release->folder_id]->name}}</td>
                         </tr>
-                        </thead>
-                        <tbody>
-                        @foreach($collection as $key => $group)
-                            <tr>
-                                <td colspan="5" class="text-center"><h2 id="{{$key}}">{{$key}}</h2></td>
-                            </tr>
-                            @foreach($group as $release)
-                                <tr>
-                                    <td>{{$release->_artist}}</td>
-                                    <td>
-                                        <a href="{{route('collection.show', $release->id)}}">
-                                            {{$release->basic_information->title}}
-                                        </a>
-                                    </td>
-                                    <td>{{$release->_year_master}}</td>
-                                    <td>{{$release->basic_information->year}}</td>
-                                    <td>{{$folders[$release->folder_id]->name}}</td>
-                                </tr>
-                            @endforeach
-                        @endforeach
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+                    @endforeach
+                @endforeach
+                </tbody>
+            </table>
         </div>
     </div>
 @stop
 
 @section('scripts')
     <script>
+        $('#caption').on("change", (e) => {
+            $(location).attr('href', "#" + $('#caption').val());
+        });
+
         $('#folder_id').on("change", (e) => {
             $(location).attr('href', "?folder=".concat($('#folder_id').val()));
         });
