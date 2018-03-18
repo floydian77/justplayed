@@ -8,12 +8,6 @@
 
 @section('navbar_form')
     <form class="form-inline my-2 my-lg-0">
-        <select id="artist_id" class="form-control mr-sm-2">
-            <option value="">Select artist</option>
-            @foreach($artists as $artist)
-                <option>{{$artist->name}}</option>
-            @endforeach
-        </select>
         <select id="folder_id" class="form-control mr-sm-2">
             @foreach($folders as $folder)
                 <option value="{{$folder->id}}" {{ $folder_id == $folder->id ? 'selected' : '' }}>
@@ -42,18 +36,23 @@
                 </tr>
                 </thead>
                 <tbody>
-                @foreach($collection as $release)
+                @foreach($collection as $key => $group)
                     <tr>
-                        <td>{{$release->_artist}}</td>
-                        <td>
-                            <a href="{{route('collection.show', $release->id)}}">
-                                {{$release->basic_information->title}}
-                            </a>
-                        </td>
-                        <td>{{$release->_year_master}}</td>
-                        <td>{{$release->basic_information->year}}</td>
-                        <td>{{$folders[$release->folder_id]->name}}</td>
+                        <td colspan="5" class="text-center"><h2>{{$key}}</h2></td>
                     </tr>
+                    @foreach($group as $release)
+                        <tr>
+                            <td>{{$release->_artist}}</td>
+                            <td>
+                                <a href="{{route('collection.show', $release->id)}}">
+                                    {{$release->basic_information->title}}
+                                </a>
+                            </td>
+                            <td>{{$release->_year_master}}</td>
+                            <td>{{$release->basic_information->year}}</td>
+                            <td>{{$folders[$release->folder_id]->name}}</td>
+                        </tr>
+                    @endforeach
                 @endforeach
                 </tbody>
             </table>
