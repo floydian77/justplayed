@@ -49,24 +49,37 @@
 
         <h2>Tracks</h2>
 
-        <div class="table-responsive">
+        <div id='tracklist' class="table-responsive">
             <form action="{{route('lastfm.scrobble', $release->id)}}" method="post">
                 @csrf
                 <table class="table table-striped">
                     @foreach($release->tracklist as $pos => $track)
-                        <tr>
+                        <tr class="{{$track->type_ == "heading" ? "track-heading" : ''}}">
                             <td>
-                                <input type="checkbox" name="track[{{$pos}}][played]" checked>
-                                <input type="hidden" name="track[{{$pos}}][artist]" value="{{DiscogsHelper::mergeArtists(empty($track->artists) ? $release->artists : $track->artists)}}">
-                                <input type="hidden" name="track[{{$pos}}][album]" value="{{$release->title}}">
-                                <input type="hidden" name="track[{{$pos}}][position]" value="{{$track->position}}">
-                                <input type="hidden" name="track[{{$pos}}][track]" value="{{$track->title}}">
-                                <input type="hidden" name="track[{{$pos}}][duration]" value="{{$track->duration}}">
+                                @if($track->type_ == "track")
+                                    <input type="checkbox" name="track[{{$pos}}][played]" checked>
+                                    <input type="hidden" name="track[{{$pos}}][artist]"
+                                           value="{{DiscogsHelper::mergeArtists(empty($track->artists) ? $release->artists : $track->artists)}}">
+                                    <input type="hidden" name="track[{{$pos}}][album]" value="{{$release->title}}">
+                                    <input type="hidden" name="track[{{$pos}}][position]" value="{{$track->position}}">
+                                    <input type="hidden" name="track[{{$pos}}][track]" value="{{$track->title}}">
+                                    <input type="hidden" name="track[{{$pos}}][duration]" value="{{$track->duration}}">
+                                @endif
                             </td>
-                            <td>{{$track->position}}</td>
-                            <td>{{DiscogsHelper::mergeArtists(empty($track->artists) ? $release->artists : $track->artists)}}</td>
-                            <td>{{$track->title}}</td>
-                            <td>{{$track->duration}}</td>
+                            <td>
+                                {{$track->position}}
+                            </td>
+                            <td>
+                                @if($track->type_ == "track")
+                                    {{DiscogsHelper::mergeArtists(empty($track->artists) ? $release->artists : $track->artists)}}
+                                @endif
+                            </td>
+                            <td>
+                                {{$track->title}}
+                            </td>
+                            <td>
+                                {{$track->duration}}
+                            </td>
                         </tr>
                     @endforeach
                 </table>
@@ -78,4 +91,17 @@
             Release not found.
         </div>
     @endunless
+@stop
+
+@section('scripts')
+    <script>
+        $('#tracklist').on('click', '.track-heading', (e) => {
+            var tracks = $(e.target.parentElement).nextUntil(".track-heading");
+            $.each(tracks, (index, track) => {
+                var box = $($(tracks[index]).children()[0]).children()[0];
+                var checked = $(box).prop('checked');
+                $(box).prop('checked', !checked);
+            });
+        });
+    </script>
 @stop
