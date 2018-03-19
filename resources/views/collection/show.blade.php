@@ -56,7 +56,7 @@
                     @foreach($release->tracklist as $pos => $track)
                         <tr>
                             <td>
-                                <input type="checkbox" name="track[{{$pos}}][selected]">
+                                <input type="checkbox" name="track[{{$pos}}][played]" checked>
                                 <input type="hidden" name="track[{{$pos}}][artist]" value="{{DiscogsHelper::mergeArtists(empty($track->artists) ? $release->artists : $track->artists)}}">
                                 <input type="hidden" name="track[{{$pos}}][album]" value="{{$release->title}}">
                                 <input type="hidden" name="track[{{$pos}}][position]" value="{{$track->position}}">

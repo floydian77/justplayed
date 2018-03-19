@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 
 use App\Helpers\DiscogsHelper;
-use App\Helpers\RedisHash;
 use App\Helpers\SettingsHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -16,38 +15,27 @@ class ScrobbleController extends Controller
 {
     public function scrobble(Request $request, $release)
     {
-        $release = RedisHash::hget(
-            RedisHash::releases(),
-            $release
-        );
-
-        $artist = DiscogsHelper::mergeArtists($release->artists);
-        $tracks = collect($release->tracklist);
-
-        // Add timestamps
-        $tracks = $tracks->reverse();
-        $timestamp = time();
-        foreach ($tracks as $track) {
-            if ($track->type_ != "track") continue;
-
-            $timestamp -= DiscogsHelper::durationToSeconds($track->duration);
-            $track->timestamp = $timestamp;
-        }
-        $tracks = $tracks->reverse();
+        $tracks = collect($request->get('track'));
 
         // Scrobble params
+        $tracks = $tracks->reverse();
         $_params = array();
+        $timestamp = time();
         foreach ($tracks as $track) {
-            if ($track->type_ != "track") continue;
+            if (!array_key_exists('played', $track)) continue;
+
+            $timestamp -= DiscogsHelper::durationToSeconds($track['duration']);
 
             $_track = array();
-            $_track['artist'] = $artist;
-            $_track['position'] = $track->position;
-            $_track['track'] = $track->title;
-            $_track['timestamp'] = $track->timestamp;
+            $_track['artist'] = $track['artist'];
+            $_track['album'] = $track['album'];
+            $_track['position'] = $track['position'];
+            $_track['track'] = $track['track'];
+            $_track['timestamp'] = $timestamp;
 
             array_push($_params, $_track);
         }
+        $_params = array_reverse($_params);
 
         $id = Auth::id();
         try {
@@ -75,7 +63,5 @@ class ScrobbleController extends Controller
         } catch (InvalidArgumentException $e) {
             dd($e);
         }
-
-        dd($_params);
     }
 }
