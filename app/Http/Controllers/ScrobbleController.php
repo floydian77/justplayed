@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\DiscogsHelper;
 use App\Helpers\SettingsHelper;
-use Illuminate\Http\Request;
+use App\Http\Requests\ScrobbleRequest;
 use Illuminate\Support\Facades\Auth;
 use LastFmApi\Api\AuthApi;
 use LastFmApi\Api\TrackApi;
@@ -13,7 +13,7 @@ use LastFmApi\Exception\InvalidArgumentException;
 
 class ScrobbleController extends Controller
 {
-    public function scrobble(Request $request, $release)
+    public function scrobble(ScrobbleRequest $request, $release)
     {
         $tracks = collect($request->get('track'));
 
