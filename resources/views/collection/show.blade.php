@@ -62,10 +62,10 @@
             <form action="{{route('lastfm.scrobble', $release->id)}}" method="post">
                 @csrf
                 <table class="table table-striped">
-                    @foreach($release->tracklist as $pos => $track)
-                        <tr class="{{$track->type_ == "heading" ? "track-heading" : ''}}">
+                    @foreach($tracks as $pos => $track)
+                        <tr class="{{$track->type_ == "heading" ? "track-heading" : ''}} {{$track->type_ == "index" ? "track-index" : ''}}">
                             <td>
-                                @if($track->type_ == "track")
+                                @if(!empty($track->scrobbleable))
                                     <input type="checkbox" name="track[{{$pos}}][played]" checked>
                                     <input type="hidden" name="track[{{$pos}}][artist]"
                                            value="{{DiscogsHelper::mergeArtists(empty($track->artists) ? $release->artists : $track->artists)}}">
