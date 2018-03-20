@@ -79,7 +79,7 @@
                                 {{$track->position}}
                             </td>
                             <td>
-                                @if($track->type_ == "track")
+                                @if($track->scrobbleable)
                                     {{DiscogsHelper::mergeArtists(empty($track->artists) ? $release->artists : $track->artists)}}
                                 @endif
                             </td>
