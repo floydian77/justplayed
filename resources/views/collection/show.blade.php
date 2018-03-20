@@ -92,7 +92,8 @@
                         </tr>
                     @endforeach
                 </table>
-                <input type="submit" value="Scrobble" class="btn btn-lg btn-danger">
+                <input type="submit" name="submit" value="Scrobble" class="btn btn-lg btn-danger">
+                <input type="submit" name="submit" value="Queue" class="btn btn-lg btn-primary">
             </form>
         </div>
     @else

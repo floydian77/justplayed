@@ -13,10 +13,31 @@ use LastFmApi\Exception\InvalidArgumentException;
 
 class ScrobbleController extends Controller
 {
-    public function scrobble(ScrobbleRequest $request, $release)
+    public function index(ScrobbleRequest $request, $release)
     {
-        $tracks = collect($request->get('track'));
+        if ($request->get('submit') == 'Scrobble') {
+            return $this->scrobble(collect($request->get('track')));
+        }
 
+        if ($request->get('submit') == 'Queue') {
+            return $this->queue();
+        }
+    }
+
+    private function queue()
+    {
+        dd('should queue');
+    }
+
+    /**
+     * Scrobble tracks.
+     *
+     * @param $tracks
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \LastFmApi\Exception\NotAuthenticatedException
+     */
+    private function scrobble($tracks)
+    {
         // Scrobble params
         $tracks = $tracks->reverse();
         $_params = array();
