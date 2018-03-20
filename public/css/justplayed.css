@@ -1,3 +1,7 @@
 .track-heading {
     font-weight: bold;
 }
+
+.track-index {
+    text-decoration: underline;
+}
