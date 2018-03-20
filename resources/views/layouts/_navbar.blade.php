@@ -15,6 +15,7 @@
                     <div class="dropdown-menu" aria-labelledby="dropdown_primary">
                         <a class="dropdown-item" href="{{route('collection.index')}}">Collection</a>
                         <a class="dropdown-item" href="{{route('settings.edit')}}">Settings</a>
+                        <a class="dropdown-item" href="{{route('lastfm.scrobble.queue')}}">Queue</a>
                         <a id="logout-link" class="dropdown-item" href="{{route('logout')}}">Logout</a>
                     </div>
                     <form id="logout-form" action="{{route('logout')}}" method="post">

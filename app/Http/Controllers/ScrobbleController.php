@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 use App\Helpers\DiscogsHelper;
 use App\Helpers\SettingsHelper;
 use App\Http\Requests\ScrobbleRequest;
+use App\Models\ScrobbleQueue;
 use Illuminate\Support\Facades\Auth;
 use LastFmApi\Api\AuthApi;
 use LastFmApi\Api\TrackApi;
@@ -13,20 +14,70 @@ use LastFmApi\Exception\InvalidArgumentException;
 
 class ScrobbleController extends Controller
 {
+    /**
+     * Scrobble or queue tracks.
+     *
+     * @param ScrobbleRequest $request
+     * @param $release
+     * @return \Illuminate\Http\RedirectResponse|void
+     * @throws \LastFmApi\Exception\NotAuthenticatedException
+     */
     public function index(ScrobbleRequest $request, $release)
     {
+        $tracks = collect($request->get('track'));
+
         if ($request->get('submit') == 'Scrobble') {
-            return $this->scrobble(collect($request->get('track')));
+            return $this->scrobble($tracks->reverse());
         }
 
         if ($request->get('submit') == 'Queue') {
-            return $this->queue();
+            return $this->queue($tracks);
         }
     }
 
-    private function queue()
+    /**
+     * Show queue.
+     *
+     * @return $this
+     */
+    public function showQueue()
     {
-        dd('should queue');
+        $queue = ScrobbleQueue::all();
+
+        return view('queue.index')
+            ->with('queue', $queue);
+    }
+
+    /**
+     * Clear queue.
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function clearQueue()
+    {
+        ScrobbleQueue::clear();
+
+        return redirect()
+            ->back()
+            ->with('status', 'Queue cleared');
+    }
+
+    /**
+     * Add tracks to queue.
+     *
+     * @param $tracks
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    private function queue($tracks)
+    {
+        ScrobbleQueue::add($tracks);
+
+        return redirect()
+            ->back()
+            ->with('status', sprintf(
+                "%d tracks added to the queue",
+                count($tracks)
+            ));
     }
 
     /**
@@ -39,7 +90,6 @@ class ScrobbleController extends Controller
     private function scrobble($tracks)
     {
         // Scrobble params
-        $tracks = $tracks->reverse();
         $_params = array();
         $timestamp = time();
         foreach ($tracks as $track) {

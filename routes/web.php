@@ -34,4 +34,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('disconnect', 'LastFmWebAuthController@disconnect')->name('lastfm.auth.disconnect');
         Route::post('scrobble/{release}', 'ScrobbleController@index')->name('lastfm.scrobble');
     });
+
+    Route::get('queue', 'ScrobbleController@showQueue')->name('lastfm.scrobble.queue');
+    Route::get('clear-queue', 'ScrobbleController@clearQueue')->name('lastfm.scrobble.queue.clear');
 });

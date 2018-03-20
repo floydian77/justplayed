@@ -92,8 +92,10 @@
                         </tr>
                     @endforeach
                 </table>
-                <input type="submit" name="submit" value="Scrobble" class="btn btn-lg btn-danger">
-                <input type="submit" name="submit" value="Queue" class="btn btn-lg btn-primary">
+                @unless(session('status'))
+                    <input type="submit" name="submit" value="Scrobble" class="btn btn-lg btn-danger">
+                    <input type="submit" name="submit" value="Queue" class="btn btn-lg btn-primary">
+                @endunless
             </form>
         </div>
     @else
