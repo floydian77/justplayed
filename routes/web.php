@@ -35,6 +35,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('scrobble/{release}', 'ScrobbleController@index')->name('lastfm.scrobble');
     });
 
-    Route::get('queue', 'ScrobbleController@showQueue')->name('lastfm.scrobble.queue');
+    Route::get('queue', 'ScrobbleController@showQueue')->name('lastfm.scrobble.queue-show');
     Route::get('clear-queue', 'ScrobbleController@clearQueue')->name('lastfm.scrobble.queue.clear');
+    Route::get('scrobble-queue', 'ScrobbleController@scrobbleQueue')->name('lastfm.scrobble.queue');
 });

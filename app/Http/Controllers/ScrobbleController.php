@@ -63,6 +63,21 @@ class ScrobbleController extends Controller
     }
 
     /**
+     * Scrobble queue.
+     *
+     * @todo clear queue.
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \LastFmApi\Exception\NotAuthenticatedException
+     */
+    public function scrobbleQueue()
+    {
+        $queue = ScrobbleQueue::all(true);
+
+        return $this->scrobble($queue);
+    }
+
+    /**
      * Add tracks to queue.
      *
      * @param $tracks

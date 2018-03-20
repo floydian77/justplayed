@@ -31,6 +31,8 @@
             </tbody>
         </table>
     </div>
-
-    <a href="{{route('lastfm.scrobble.queue.clear')}}" class="btn btn-lg btn-danger">Clear</a>
+    @if(count($queue) > 0)
+        <a href="{{route('lastfm.scrobble.queue')}}" class="btn btn-lg btn-danger">Scrobble</a>
+        <a href="{{route('lastfm.scrobble.queue.clear')}}" class="btn btn-lg btn-danger">Clear</a>
+    @endif
 @stop

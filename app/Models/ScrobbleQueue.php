@@ -34,7 +34,7 @@ class ScrobbleQueue
      *
      * @return \Illuminate\Support\Collection
      */
-    public static function all()
+    public static function all($assoc = false)
     {
         $_queue = Redis::lrange(
             self::signature,
@@ -44,7 +44,7 @@ class ScrobbleQueue
 
         $queue = collect();
         foreach ($_queue as $track) {
-            $queue->push(json_decode($track));
+            $queue->push(json_decode($track, $assoc));
         }
 
         return $queue;
