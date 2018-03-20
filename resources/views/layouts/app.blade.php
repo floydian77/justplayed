@@ -14,6 +14,7 @@
 
     <!-- Custom styles for this template -->
     <link href="{{asset('css/starter-template.css')}}" rel="stylesheet">
+    <link href="{{asset('css/justplayed.css')}}" rel="stylesheet">
 </head>
 
 <body>
